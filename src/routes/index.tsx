@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useState, useEffect } from "react";
 import { SignupForm } from "@/components/signup/SignupForm";
 
 export const Route = createFileRoute("/")({
@@ -14,6 +15,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+
   return (
     <main className="min-h-screen min-h-dvh relative">
       <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 w-64 h-64 sm:w-[36rem] sm:h-[36rem] rounded-full bg-primary/15 blur-3xl" />
@@ -35,7 +39,11 @@ function Index() {
           </p>
         </header>
 
-        <SignupForm />
+        {mounted ? <SignupForm /> : (
+          <div className="bg-card border border-glass-border rounded-2xl p-8 text-center text-muted-foreground text-sm">
+            Loading…
+          </div>
+        )}
 
         <footer className="mt-8 sm:mt-10 text-center text-[11px] text-muted-foreground/60 px-2">
           Secure 2FA-protected vault · Governed by NSW law
