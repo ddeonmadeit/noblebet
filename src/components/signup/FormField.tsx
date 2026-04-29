@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
 
 export function FormField({
   label,
@@ -13,10 +13,10 @@ export function FormField({
 }) {
   return (
     <div className="space-y-1.5 sm:space-y-2">
-      <label className="block text-xs sm:text-sm font-medium text-foreground leading-snug">
+      <p className="text-xs sm:text-sm font-medium text-foreground leading-snug">
         {label}
         {required && <span className="ml-1 text-primary">*</span>}
-      </label>
+      </p>
       {hint && <p className="text-[11px] sm:text-xs text-muted-foreground">{hint}</p>}
       {children}
     </div>
@@ -28,7 +28,6 @@ export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={
-        // text-base (16px) prevents iOS auto-zoom on focus; py-3 = 48px tap target
         "w-full rounded-lg glass px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/60 " +
         "focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/50 transition " +
         (props.className ?? "")
@@ -71,11 +70,10 @@ export function RadioGroup({
             type="button"
             onClick={() => onChange(opt)}
             className={
-              // min-h-[44px] ensures comfortable touch target on mobile
-              "px-5 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition border touch-manipulation " +
+              "px-5 py-3 min-h-[48px] min-w-[64px] rounded-lg text-sm font-medium transition border touch-manipulation select-none " +
               (active
                 ? "bg-primary text-primary-foreground border-primary glow"
-                : "glass text-foreground hover:border-primary/40")
+                : "glass text-foreground border-glass-border active:bg-primary/20")
             }
           >
             {opt}
@@ -102,15 +100,18 @@ export function FileUpload({
   file: File | null;
   onFile: (f: File | null) => void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <FormField label={label} required={required} hint={description}>
-      <label
-        htmlFor={name}
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
         className={
-          "group flex items-center gap-3 rounded-xl border-dashed border-2 p-4 cursor-pointer transition min-h-[64px] " +
+          "w-full flex items-center gap-3 rounded-xl border-dashed border-2 p-4 touch-manipulation transition text-left " +
           (file
-            ? "glass border-primary/60 bg-primary/10"
-            : "glass border-glass-border hover:border-primary/50 active:border-primary/50")
+            ? "glass border-primary/60 bg-primary/10 active:brightness-90"
+            : "glass border-glass-border active:border-primary/50")
         }
       >
         {file ? (
@@ -140,15 +141,14 @@ export function FileUpload({
         {file && (
           <span className="text-xs font-medium text-primary/80 shrink-0 underline">Replace</span>
         )}
-        <input
-          id={name}
-          type="file"
-          accept="image/*,application/pdf"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-        />
-      </label>
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,application/pdf"
+        className="hidden"
+        onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+      />
     </FormField>
   );
 }
