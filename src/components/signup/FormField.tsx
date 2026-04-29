@@ -65,22 +65,27 @@ export function RadioGroup({
       {options.map((opt) => {
         const active = value === opt;
         return (
-          <button
+          <label
             key={opt}
-            type="button"
-            onClick={() => onChange(opt)}
             className={
-              "px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold transition border touch-manipulation select-none " +
+              "inline-flex items-center justify-center px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border cursor-pointer select-none transition " +
               (active
-                ? "bg-primary text-primary-foreground border-primary shadow-[0_0_20px_oklch(0.65_0.18_250/0.4)]"
-                : "bg-white/[0.07] border-white/15 text-foreground active:bg-white/15")
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white/[0.07] border-white/15 text-foreground")
             }
           >
+            <input
+              type="radio"
+              name={name}
+              value={opt}
+              checked={active}
+              onChange={() => onChange(opt)}
+              className="sr-only"
+            />
             {opt}
-          </button>
+          </label>
         );
       })}
-      <input type="hidden" name={name} value={value} />
     </div>
   );
 }
