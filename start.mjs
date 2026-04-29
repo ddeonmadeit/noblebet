@@ -65,7 +65,10 @@ serve({
     const ct = response.headers.get("Content-Type") ?? "";
     if (ct.includes("text/html")) {
       const body = await response.text();
-      return new Response(body, { status: response.status, headers: response.headers });
+      const headers = new Headers(response.headers);
+      headers.set("Cache-Control", "no-store, no-transform");
+      headers.set("Content-Length", String(new TextEncoder().encode(body).byteLength));
+      return new Response(body, { status: response.status, headers });
     }
     return response;
   },

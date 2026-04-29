@@ -63,21 +63,26 @@ export function RadioGroup({
   return (
     <div className="flex flex-wrap gap-2">
       {options.map((opt) => {
-        const active = value === opt;
+        const id = `${name}-${opt.replace(/\s+/g, "-")}`;
         return (
-          <button
+          <label
             key={opt}
-            type="button"
-            onClick={() => onChange(opt)}
-            className={
-              "px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border select-none touch-manipulation active:scale-95 transition-transform " +
-              (active
-                ? "bg-primary text-primary-foreground border-primary"
-                : "bg-white/[0.07] border-white/15 text-foreground")
-            }
+            htmlFor={id}
+            className="relative cursor-pointer touch-manipulation"
           >
-            {opt}
-          </button>
+            <input
+              type="radio"
+              id={id}
+              name={name}
+              value={opt}
+              checked={value === opt}
+              onChange={() => onChange(opt)}
+              className="sr-only peer"
+            />
+            <span className="flex items-center justify-center px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border select-none transition bg-white/[0.07] border-white/15 text-foreground peer-checked:bg-primary peer-checked:text-primary-foreground peer-checked:border-primary">
+              {opt}
+            </span>
+          </label>
         );
       })}
     </div>
