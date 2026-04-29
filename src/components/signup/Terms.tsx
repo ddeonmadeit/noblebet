@@ -1,6 +1,6 @@
 export function TermsContent() {
   return (
-    <div className="prose-invert max-w-none text-sm text-muted-foreground leading-relaxed space-y-4 max-h-[420px] overflow-y-auto pr-3 rounded-lg glass p-5">
+    <div className="prose-invert max-w-none text-sm text-muted-foreground leading-relaxed space-y-4 max-h-[55dvh] sm:max-h-[420px] overflow-y-auto pr-3 rounded-lg glass p-4 sm:p-5">
       <h3 className="text-foreground font-semibold text-base">1. Payment to You</h3>
       <p>(a) We offer to pay you $350 to a bank account of your choosing in exchange for the sole and exclusive right to create or use any betting accounts in your name, along with the right to fund those accounts with a betting bank account created in your name for the purposes of betting and transferring capital and profits of betting activities to other bank accounts of ours.</p>
       <p>(b) The distribution of this payment is subject to our absolute discretion.</p>

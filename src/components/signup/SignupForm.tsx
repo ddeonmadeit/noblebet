@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { FormField, TextInput, TextArea, RadioGroup, FileUpload } from "./FormField";
 import { TermsContent } from "./Terms";
 import { submitForm, type FilePayload } from "@/lib/submitForm";
@@ -40,10 +40,16 @@ type FormState = {
 const STEPS = ["Details", "Terms", "Documents", "Review"] as const;
 
 export function SignupForm() {
+  const topRef = useRef<HTMLDivElement>(null);
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const goToStep = (n: number) => {
+    setStep(n);
+    topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
   const [data, setData] = useState<FormState>({
     email: "",
     referrer: "",
@@ -93,7 +99,7 @@ export function SignupForm() {
 
   if (submitted) {
     return (
-      <div className="glass-strong rounded-2xl p-10 text-center max-w-xl mx-auto">
+      <div className="glass-strong rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
         <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4 glow">
           <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -108,7 +114,7 @@ export function SignupForm() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
+    <div ref={topRef} className="space-y-4 sm:space-y-6 scroll-mt-4">
       {/* Stepper */}
       <div className="glass rounded-2xl p-3 sm:p-4">
         <div className="flex items-center justify-center gap-2 sm:gap-3">
@@ -175,7 +181,7 @@ export function SignupForm() {
               <TextInput value={data.referrer} onChange={(e) => update("referrer", e.target.value)} />
             </FormField>
 
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-4 sm:grid-cols-2">
               <FormField label="First name" required>
                 <TextInput value={data.firstName} onChange={(e) => update("firstName", e.target.value)} />
               </FormField>
@@ -309,9 +315,11 @@ export function SignupForm() {
       <div className="flex items-center justify-between gap-3">
         <button
           type="button"
-          onClick={() => setStep((s) => Math.max(0, s - 1))}
-          disabled={step === 0}
-          className="glass px-4 sm:px-5 py-2.5 rounded-lg text-sm font-medium text-foreground hover:border-primary/40 disabled:opacity-40 disabled:cursor-not-allowed transition"
+          onClick={() => goToStep(step - 1)}
+          className={
+            "glass px-5 py-3 min-h-[48px] rounded-xl text-sm font-medium text-foreground transition touch-manipulation " +
+            (step === 0 ? "invisible pointer-events-none" : "hover:border-primary/40")
+          }
         >
           ← Back
         </button>
@@ -319,8 +327,8 @@ export function SignupForm() {
           <button
             type="button"
             disabled={!canContinue}
-            onClick={() => setStep((s) => s + 1)}
-            className="bg-primary text-primary-foreground px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition glow"
+            onClick={() => goToStep(step + 1)}
+            className="bg-primary text-primary-foreground px-6 py-3 min-h-[48px] rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
             Continue →
           </button>
@@ -365,7 +373,7 @@ export function SignupForm() {
                 setSubmitting(false);
               }
             }}
-            className="bg-primary text-primary-foreground px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed transition glow"
+            className="bg-primary text-primary-foreground px-6 py-3 min-h-[48px] rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
             {submitting ? "Submitting…" : "Submit application"}
           </button>
