@@ -68,10 +68,9 @@ export function RadioGroup({
           <button
             key={opt}
             type="button"
-            onPointerDown={(e) => { e.preventDefault(); onChange(opt); }}
-            style={{ WebkitTapHighlightColor: "transparent", position: "relative", zIndex: 1 }}
+            onClick={() => onChange(opt)}
             className={
-              "px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border select-none " +
+              "px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border select-none touch-manipulation active:scale-95 transition-transform " +
               (active
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-white/[0.07] border-white/15 text-foreground")
