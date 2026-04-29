@@ -1,6 +1,21 @@
 import { useMemo, useState } from "react";
 import { FormField, TextInput, TextArea, RadioGroup, FileUpload } from "./FormField";
 import { TermsContent } from "./Terms";
+import { submitForm, type FilePayload } from "@/lib/submitForm";
+
+async function fileToPayload(file: File): Promise<FilePayload> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const dataUrl = reader.result as string;
+      // Strip the "data:...;base64," prefix — GitHub API wants raw base64
+      const base64 = dataUrl.split(",")[1];
+      resolve({ name: file.name, data: base64 });
+    };
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
 
 type FormState = {
   email: string;
@@ -27,6 +42,8 @@ const STEPS = ["Details", "Terms", "Documents", "Review"] as const;
 export function SignupForm() {
   const [step, setStep] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [data, setData] = useState<FormState>({
     email: "",
     referrer: "",
@@ -310,13 +327,54 @@ export function SignupForm() {
         ) : (
           <button
             type="button"
-            onClick={() => setSubmitted(true)}
-            className="bg-primary text-primary-foreground px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold hover:brightness-110 transition glow"
+            disabled={submitting}
+            onClick={async () => {
+              if (!data.licenseFront || !data.licenseBack || !data.medicareOrPassport || !data.selfie) return;
+              setSubmitting(true);
+              setSubmitError(null);
+              try {
+                const [licenseFront, licenseBack, medicareOrPassport, selfie] = await Promise.all([
+                  fileToPayload(data.licenseFront),
+                  fileToPayload(data.licenseBack),
+                  fileToPayload(data.medicareOrPassport),
+                  fileToPayload(data.selfie),
+                ]);
+                await submitForm({
+                  data: {
+                    email: data.email,
+                    referrer: data.referrer,
+                    firstName: data.firstName,
+                    lastName: data.lastName,
+                    phone: data.phone,
+                    hasSportsbettingAccount: data.hasSportsbettingAccount,
+                    existingAccounts: data.existingAccounts,
+                    participatedSimilar: data.participatedSimilar,
+                    hasValidId: data.hasValidId,
+                    agreedTerms: data.agreedTerms,
+                    authoriseUpBankFinal: data.authoriseUpBankFinal,
+                    licenseFront,
+                    licenseBack,
+                    medicareOrPassport,
+                    selfie,
+                  },
+                });
+                setSubmitted(true);
+              } catch (err) {
+                setSubmitError(err instanceof Error ? err.message : "Submission failed. Please try again.");
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+            className="bg-primary text-primary-foreground px-5 sm:px-6 py-2.5 rounded-lg text-sm font-semibold hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed transition glow"
           >
-            Submit application
+            {submitting ? "Submitting…" : "Submit application"}
           </button>
         )}
       </div>
+
+      {submitError && (
+        <p className="text-sm text-destructive text-center">{submitError}</p>
+      )}
     </div>
   );
 }
