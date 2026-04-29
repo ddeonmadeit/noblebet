@@ -99,7 +99,7 @@ export function SignupForm() {
 
   if (submitted) {
     return (
-      <div className="glass-strong rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
+      <div className="bg-card border border-glass-border rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
         <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4 glow">
           <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -158,7 +158,7 @@ export function SignupForm() {
       </div>
 
       {/* Step content */}
-      <div className="glass-strong rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
+      <div className="bg-card border border-glass-border rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
         {step === 0 && (
           <>
             <div>
@@ -168,7 +168,7 @@ export function SignupForm() {
               </p>
             </div>
 
-            <div className="rounded-xl glass border-l-4 border-l-primary p-4 text-sm text-muted-foreground leading-relaxed">
+            <div className="rounded-xl bg-white/[0.05] border-l-4 border-l-primary border border-white/10 p-4 text-sm text-muted-foreground leading-relaxed">
               <strong className="text-foreground">Why we ask:</strong> We will never use your ID for anything beyond signing you up to the aforementioned websites or creating a new bank account for depositing into and withdrawing from those accounts.
             </div>
 
