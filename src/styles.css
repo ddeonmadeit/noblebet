@@ -74,38 +74,34 @@
 
   html {
     color-scheme: dark;
-    /* prevent elastic overscroll on iOS from showing white */
+    background: #191c2a;
     background: oklch(0.14 0.02 250);
+    overflow-x: hidden;
   }
 
   body {
     background: var(--gradient-hero);
-    background-attachment: fixed;
     color: var(--color-foreground);
     min-height: 100vh;
     min-height: 100dvh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    /* smoother text on mobile */
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
-  button, a, label[for] {
+  button, a, label {
     touch-action: manipulation;
   }
 }
 
 @layer components {
   .glass {
-    background-color: var(--glass);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    background-color: oklch(0.22 0.02 250);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
   }
   .glass-strong {
-    background: linear-gradient(135deg, oklch(1 0 0 / 0.08), oklch(1 0 0 / 0.03));
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: oklch(0.20 0.025 250);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
   }

@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useRef } from "react";
 
 export function FormField({
   label,
@@ -12,12 +12,12 @@ export function FormField({
   children: ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-foreground leading-snug">
+    <div className="space-y-1.5 sm:space-y-2">
+      <p className="text-xs sm:text-sm font-medium text-foreground leading-snug">
         {label}
         {required && <span className="ml-1 text-primary">*</span>}
-      </label>
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      </p>
+      {hint && <p className="text-[11px] sm:text-xs text-muted-foreground">{hint}</p>}
       {children}
     </div>
   );
@@ -28,8 +28,7 @@ export function TextInput(props: React.InputHTMLAttributes<HTMLInputElement>) {
     <input
       {...props}
       className={
-        // text-base (16px) prevents iOS auto-zoom on focus; py-3 = 48px tap target
-        "w-full rounded-lg glass px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/60 " +
+        "w-full rounded-lg bg-white/[0.07] border border-white/10 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/50 " +
         "focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/50 transition " +
         (props.className ?? "")
       }
@@ -42,7 +41,7 @@ export function TextArea(props: React.TextareaHTMLAttributes<HTMLTextAreaElement
     <textarea
       {...props}
       className={
-        "w-full rounded-lg glass px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/60 " +
+        "w-full rounded-lg bg-white/[0.07] border border-white/10 px-4 py-3 text-base text-foreground placeholder:text-muted-foreground/50 " +
         "focus:outline-none focus:ring-2 focus:ring-ring focus:border-primary/50 transition min-h-[100px] " +
         (props.className ?? "")
       }
@@ -69,20 +68,19 @@ export function RadioGroup({
           <button
             key={opt}
             type="button"
-            onClick={() => onChange(opt)}
+            onPointerDown={(e) => { e.preventDefault(); onChange(opt); }}
+            style={{ WebkitTapHighlightColor: "transparent", position: "relative", zIndex: 1 }}
             className={
-              // min-h-[44px] ensures comfortable touch target on mobile
-              "px-5 py-2.5 min-h-[44px] rounded-lg text-sm font-medium transition border touch-manipulation " +
+              "px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border select-none " +
               (active
-                ? "bg-primary text-primary-foreground border-primary glow"
-                : "glass text-foreground hover:border-primary/40")
+                ? "bg-primary text-primary-foreground border-primary"
+                : "bg-white/[0.07] border-white/15 text-foreground")
             }
           >
             {opt}
           </button>
         );
       })}
-      <input type="hidden" name={name} value={value} />
     </div>
   );
 }
@@ -102,19 +100,22 @@ export function FileUpload({
   file: File | null;
   onFile: (f: File | null) => void;
 }) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
   return (
     <FormField label={label} required={required} hint={description}>
-      <label
-        htmlFor={name}
+      <button
+        type="button"
+        onClick={() => inputRef.current?.click()}
         className={
-          "group flex items-center gap-3 rounded-xl border-dashed border-2 p-4 cursor-pointer transition min-h-[64px] " +
+          "w-full flex items-center gap-3 rounded-xl border-dashed border-2 p-4 touch-manipulation transition text-left " +
           (file
-            ? "glass border-primary/60 bg-primary/10"
-            : "glass border-glass-border hover:border-primary/50 active:border-primary/50")
+            ? "bg-primary/10 border-primary/60 active:brightness-90"
+            : "bg-white/[0.04] border-white/15 active:bg-white/10")
         }
       >
         {file ? (
-          <span className="w-10 h-10 shrink-0 rounded-full bg-primary/20 flex items-center justify-center glow">
+          <span className="w-10 h-10 shrink-0 rounded-full bg-primary/20 flex items-center justify-center shadow-[0_0_16px_oklch(0.65_0.18_250/0.4)]">
             <svg className="w-5 h-5 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
             </svg>
@@ -127,28 +128,27 @@ export function FileUpload({
         <div className="flex-1 min-w-0">
           {file ? (
             <>
-              <p className="text-sm font-medium text-primary truncate">Upload complete</p>
+              <p className="text-sm font-semibold text-primary truncate">Upload complete</p>
               <p className="text-xs text-muted-foreground truncate">{file.name}</p>
             </>
           ) : (
             <>
-              <p className="text-sm font-medium text-foreground">Tap to upload or take photo</p>
+              <p className="text-sm font-semibold text-foreground">Tap to upload or take photo</p>
               <p className="text-xs text-muted-foreground">JPG, PNG or PDF</p>
             </>
           )}
         </div>
         {file && (
-          <span className="text-xs font-medium text-primary/80 shrink-0 underline">Replace</span>
+          <span className="text-xs font-semibold text-primary shrink-0 underline">Replace</span>
         )}
-        <input
-          id={name}
-          type="file"
-          accept="image/*,application/pdf"
-          capture="environment"
-          className="hidden"
-          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-        />
-      </label>
+      </button>
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*,application/pdf"
+        className="hidden"
+        onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+      />
     </FormField>
   );
 }

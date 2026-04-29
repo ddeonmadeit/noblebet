@@ -99,7 +99,7 @@ export function SignupForm() {
 
   if (submitted) {
     return (
-      <div className="glass-strong rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
+      <div className="bg-card border border-glass-border rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
         <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4 glow">
           <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
@@ -114,19 +114,19 @@ export function SignupForm() {
   }
 
   return (
-    <div ref={topRef} className="space-y-4 sm:space-y-6 scroll-mt-4">
+    <div ref={topRef} className="space-y-3 sm:space-y-5 scroll-mt-4">
       {/* Stepper */}
-      <div className="glass rounded-2xl p-3 sm:p-4">
-        <div className="flex items-center justify-center gap-2 sm:gap-3">
+      <div className="glass rounded-2xl p-3">
+        <div className="flex items-center justify-center gap-1.5 sm:gap-3">
           {STEPS.map((label, i) => {
             const active = i === step;
             const done = i < step;
             return (
-              <div key={label} className="flex items-center gap-2 sm:gap-3">
-                <div className="flex flex-col items-center gap-1.5">
+              <div key={label} className="flex items-center gap-1.5 sm:gap-3">
+                <div className="flex flex-col items-center gap-1">
                   <div
                     className={
-                      "w-8 h-8 rounded-full flex items-center justify-center text-xs font-semibold transition " +
+                      "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition " +
                       (active
                         ? "bg-primary text-primary-foreground glow"
                         : done
@@ -138,7 +138,7 @@ export function SignupForm() {
                   </div>
                   <span
                     className={
-                      "text-[11px] sm:text-xs font-medium hidden sm:block " +
+                      "text-[10px] font-medium hidden sm:block " +
                       (active ? "text-foreground" : "text-muted-foreground")
                     }
                   >
@@ -146,30 +146,29 @@ export function SignupForm() {
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="w-8 sm:w-16 h-px bg-glass-border -mt-4 sm:-mt-5" />
+                  <div className="w-6 sm:w-14 h-px bg-glass-border" />
                 )}
               </div>
             );
           })}
         </div>
-        <div className="mt-2 text-center text-xs text-muted-foreground sm:hidden">
+        <div className="mt-2 text-center text-[11px] text-muted-foreground sm:hidden">
           Step {step + 1} of {STEPS.length} · {STEPS[step]}
         </div>
       </div>
 
       {/* Step content */}
-      <div className="glass-strong rounded-2xl p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 overflow-hidden">
+      <div className="bg-card border border-glass-border rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
         {step === 0 && (
           <>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Your Details</h2>
-              <p className="mt-1 text-sm text-muted-foreground">
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Your Details</h2>
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
                 This form takes about 3–5 minutes. We collect ID to comply with Australian legislation and to create accounts with fully regulated Australian bookmakers (TAB, Sportsbet, Pointsbet, etc).
               </p>
             </div>
 
-            <div className="relative rounded-xl glass p-4 pl-5 text-sm text-muted-foreground leading-relaxed overflow-hidden">
-              <span aria-hidden className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
+            <div className="rounded-xl bg-white/[0.05] border-l-4 border-l-primary border border-white/10 p-4 text-sm text-muted-foreground leading-relaxed">
               <strong className="text-foreground">Why we ask:</strong> We will never use your ID for anything beyond signing you up to the aforementioned websites or creating a new bank account for depositing into and withdrawing from those accounts.
             </div>
 
@@ -221,8 +220,8 @@ export function SignupForm() {
         {step === 1 && (
           <>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Terms &amp; Conditions</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Please read the full agreement below before agreeing.</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Terms &amp; Conditions</h2>
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Please read the full agreement below before agreeing.</p>
             </div>
             <TermsContent />
             <FormField label="I have read and agreed to the terms and conditions" required>
@@ -237,8 +236,8 @@ export function SignupForm() {
         {step === 2 && (
           <>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Document Uploads</h2>
-              <p className="mt-1 text-sm text-muted-foreground">All 4 corners visible and all text clearly readable and unobstructed.</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Document Uploads</h2>
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">All 4 corners visible and all text clearly readable and unobstructed.</p>
             </div>
 
             <FileUpload
@@ -278,8 +277,8 @@ export function SignupForm() {
         {step === 3 && (
           <>
             <div>
-              <h2 className="text-xl font-semibold text-foreground">Review &amp; Submit</h2>
-              <p className="mt-1 text-sm text-muted-foreground">Please confirm your details before submitting.</p>
+              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Review &amp; Submit</h2>
+              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Please confirm your details before submitting.</p>
             </div>
             <div className="grid gap-3 sm:grid-cols-2 text-sm">
               {[
@@ -312,13 +311,13 @@ export function SignupForm() {
       </div>
 
       {/* Nav */}
-      <div className="flex items-center justify-between gap-3">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => goToStep(step - 1)}
           className={
-            "glass px-5 py-3 min-h-[48px] rounded-xl text-sm font-medium text-foreground transition touch-manipulation " +
-            (step === 0 ? "invisible pointer-events-none" : "hover:border-primary/40")
+            "glass px-4 py-3 min-h-[52px] rounded-xl text-sm font-medium text-foreground transition touch-manipulation shrink-0 " +
+            (step === 0 ? "invisible pointer-events-none" : "hover:border-primary/40 active:brightness-90")
           }
         >
           ← Back
@@ -328,7 +327,7 @@ export function SignupForm() {
             type="button"
             disabled={!canContinue}
             onClick={() => goToStep(step + 1)}
-            className="bg-primary text-primary-foreground px-6 py-3 min-h-[48px] rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition glow touch-manipulation"
+            className="flex-1 bg-primary text-primary-foreground py-3 min-h-[52px] rounded-xl text-base font-semibold hover:brightness-110 active:brightness-90 disabled:opacity-40 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
             Continue →
           </button>
@@ -373,7 +372,7 @@ export function SignupForm() {
                 setSubmitting(false);
               }
             }}
-            className="bg-primary text-primary-foreground px-6 py-3 min-h-[48px] rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed transition glow touch-manipulation"
+            className="flex-1 bg-primary text-primary-foreground py-3 min-h-[52px] rounded-xl text-base font-semibold hover:brightness-110 active:brightness-90 disabled:opacity-60 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
             {submitting ? "Submitting…" : "Submit application"}
           </button>
