@@ -68,7 +68,7 @@ export function RadioGroup({
           <label
             key={opt}
             className={
-              "inline-flex items-center justify-center px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border cursor-pointer select-none transition " +
+              "inline-flex items-center justify-center px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border cursor-pointer select-none transition touch-manipulation " +
               (active
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-white/[0.07] border-white/15 text-foreground")

@@ -89,7 +89,7 @@
     overflow-x: hidden;
   }
 
-  button, a, label[for] {
+  button, a, label {
     touch-action: manipulation;
   }
 }
