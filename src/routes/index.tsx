@@ -15,9 +15,9 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="min-h-screen min-h-dvh relative overflow-x-hidden">
-      <div aria-hidden className="pointer-events-none fixed -top-40 -left-40 w-64 h-64 sm:w-[36rem] sm:h-[36rem] rounded-full bg-primary/15 blur-3xl" />
-      <div aria-hidden className="pointer-events-none fixed -bottom-40 -right-40 w-64 h-64 sm:w-[36rem] sm:h-[36rem] rounded-full bg-accent/15 blur-3xl" />
+    <main className="min-h-screen min-h-dvh relative">
+      <div aria-hidden className="pointer-events-none absolute -top-40 -left-40 w-64 h-64 sm:w-[36rem] sm:h-[36rem] rounded-full bg-primary/15 blur-3xl" />
+      <div aria-hidden className="pointer-events-none absolute bottom-0 -right-40 w-64 h-64 sm:w-[36rem] sm:h-[36rem] rounded-full bg-accent/15 blur-3xl" />
 
       <div className="relative mx-auto max-w-2xl px-3 sm:px-6 pt-5 pb-8 sm:pt-10 sm:pb-16 md:pt-16 md:pb-20">
         <header className="text-center mb-5 sm:mb-8">

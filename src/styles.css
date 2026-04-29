@@ -76,6 +76,7 @@
     color-scheme: dark;
     background: #191c2a;
     background: oklch(0.14 0.02 250);
+    overflow-x: hidden;
   }
 
   body {
@@ -85,6 +86,7 @@
     min-height: 100dvh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
   }
 
   button, a, label[for] {

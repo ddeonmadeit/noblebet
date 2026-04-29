@@ -158,7 +158,7 @@ export function SignupForm() {
       </div>
 
       {/* Step content */}
-      <div className="glass-strong rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5 overflow-hidden">
+      <div className="glass-strong rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
         {step === 0 && (
           <>
             <div>
@@ -168,8 +168,7 @@ export function SignupForm() {
               </p>
             </div>
 
-            <div className="relative rounded-xl glass p-4 pl-5 text-sm text-muted-foreground leading-relaxed overflow-hidden">
-              <span aria-hidden className="absolute left-0 top-0 bottom-0 w-1 bg-primary" />
+            <div className="rounded-xl glass border-l-4 border-l-primary p-4 text-sm text-muted-foreground leading-relaxed">
               <strong className="text-foreground">Why we ask:</strong> We will never use your ID for anything beyond signing you up to the aforementioned websites or creating a new bank account for depositing into and withdrawing from those accounts.
             </div>
 
