@@ -96,16 +96,12 @@
 
 @layer components {
   .glass {
-    background-color: var(--glass);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
+    background-color: oklch(0.22 0.02 250);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
   }
   .glass-strong {
-    background: linear-gradient(135deg, oklch(1 0 0 / 0.08), oklch(1 0 0 / 0.03));
-    backdrop-filter: blur(24px) saturate(180%);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    background: oklch(0.20 0.025 250);
     border: 1px solid var(--glass-border);
     box-shadow: var(--shadow-glass);
   }
