@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 
 const __dirname = fileURLToPath(new URL(".", import.meta.url));
 const clientDir = join(__dirname, "dist/client");
+const publicDir = join(__dirname, "public");
 
 const { default: server } = await import("./dist/server/server.js");
 
@@ -41,8 +42,23 @@ serve({
           },
         });
       } catch {
-        // not a static file — fall through to SSR
+        // not a static file — fall through
       }
+    }
+
+    // Serve public directory files (favicon, etc.)
+    try {
+      const filePath = join(publicDir, url.pathname);
+      const content = readFileSync(filePath);
+      const ext = extname(filePath).toLowerCase();
+      return new Response(content, {
+        headers: {
+          "Content-Type": MIME[ext] ?? "application/octet-stream",
+          "Cache-Control": "public, max-age=86400",
+        },
+      });
+    } catch {
+      // fall through to SSR
     }
 
     return server.fetch(request);

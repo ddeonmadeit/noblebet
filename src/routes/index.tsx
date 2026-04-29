@@ -5,10 +5,10 @@ export const Route = createFileRoute("/")({
   component: Index,
   head: () => ({
     meta: [
-      { title: "We Will Buy Your Betting Account For $350" },
-      { name: "description", content: "Australian's Only — secure sign-up form. Takes 3–5 minutes to complete." },
-      { property: "og:title", content: "We Will Buy Your Betting Account For $350" },
-      { property: "og:description", content: "Australian's Only — secure sign-up form." },
+      { title: "Noble Bet — We Will Buy Your Betting Account For $350" },
+      { name: "description", content: "Australians Only — secure sign-up form. Takes 3–5 minutes to complete." },
+      { property: "og:title", content: "Noble Bet — We Will Buy Your Betting Account For $350" },
+      { property: "og:description", content: "Australians Only — secure sign-up form." },
     ],
   }),
 });
