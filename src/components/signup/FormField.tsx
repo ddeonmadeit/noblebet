@@ -65,25 +65,20 @@ export function RadioGroup({
       {options.map((opt) => {
         const active = value === opt;
         return (
-          <label
+          <button
             key={opt}
+            type="button"
+            onPointerDown={(e) => { e.preventDefault(); onChange(opt); }}
+            style={{ WebkitTapHighlightColor: "transparent", position: "relative", zIndex: 1 }}
             className={
-              "inline-flex items-center justify-center px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border cursor-pointer select-none transition touch-manipulation " +
+              "px-5 py-3 min-h-[48px] min-w-[72px] rounded-lg text-sm font-semibold border select-none " +
               (active
                 ? "bg-primary text-primary-foreground border-primary"
                 : "bg-white/[0.07] border-white/15 text-foreground")
             }
           >
-            <input
-              type="radio"
-              name={name}
-              value={opt}
-              checked={active}
-              onChange={() => onChange(opt)}
-              className="sr-only"
-            />
             {opt}
-          </label>
+          </button>
         );
       })}
     </div>
