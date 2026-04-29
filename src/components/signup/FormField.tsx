@@ -12,12 +12,12 @@ export function FormField({
   children: ReactNode;
 }) {
   return (
-    <div className="space-y-2">
-      <label className="block text-sm font-medium text-foreground leading-snug">
+    <div className="space-y-1.5 sm:space-y-2">
+      <label className="block text-xs sm:text-sm font-medium text-foreground leading-snug">
         {label}
         {required && <span className="ml-1 text-primary">*</span>}
       </label>
-      {hint && <p className="text-xs text-muted-foreground">{hint}</p>}
+      {hint && <p className="text-[11px] sm:text-xs text-muted-foreground">{hint}</p>}
       {children}
     </div>
   );
