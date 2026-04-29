@@ -74,18 +74,16 @@
 
   html {
     color-scheme: dark;
-    /* prevent elastic overscroll on iOS from showing white */
+    background: #191c2a;
     background: oklch(0.14 0.02 250);
   }
 
   body {
     background: var(--gradient-hero);
-    background-attachment: fixed;
     color: var(--color-foreground);
     min-height: 100vh;
     min-height: 100dvh;
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
-    /* smoother text on mobile */
     -webkit-font-smoothing: antialiased;
   }
 

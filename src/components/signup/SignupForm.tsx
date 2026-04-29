@@ -114,9 +114,9 @@ export function SignupForm() {
   }
 
   return (
-    <div ref={topRef} className="space-y-4 sm:space-y-6 scroll-mt-4">
+    <div ref={topRef} className="space-y-3 sm:space-y-5 scroll-mt-4">
       {/* Stepper */}
-      <div className="glass rounded-2xl p-2 sm:p-4">
+      <div className="glass rounded-2xl p-3">
         <div className="flex items-center justify-center gap-1.5 sm:gap-3">
           {STEPS.map((label, i) => {
             const active = i === step;
@@ -126,7 +126,7 @@ export function SignupForm() {
                 <div className="flex flex-col items-center gap-1">
                   <div
                     className={
-                      "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-[11px] sm:text-xs font-semibold transition " +
+                      "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition " +
                       (active
                         ? "bg-primary text-primary-foreground glow"
                         : done
@@ -138,7 +138,7 @@ export function SignupForm() {
                   </div>
                   <span
                     className={
-                      "text-[10px] sm:text-xs font-medium hidden sm:block " +
+                      "text-[10px] font-medium hidden sm:block " +
                       (active ? "text-foreground" : "text-muted-foreground")
                     }
                   >
@@ -146,19 +146,19 @@ export function SignupForm() {
                   </span>
                 </div>
                 {i < STEPS.length - 1 && (
-                  <div className="w-6 sm:w-16 h-px bg-glass-border -mt-3 sm:-mt-5" />
+                  <div className="w-6 sm:w-14 h-px bg-glass-border" />
                 )}
               </div>
             );
           })}
         </div>
-        <div className="mt-1.5 text-center text-[11px] sm:text-xs text-muted-foreground sm:hidden">
+        <div className="mt-2 text-center text-[11px] text-muted-foreground sm:hidden">
           Step {step + 1} of {STEPS.length} · {STEPS[step]}
         </div>
       </div>
 
       {/* Step content */}
-      <div className="glass-strong rounded-2xl p-3 sm:p-6 md:p-8 space-y-4 sm:space-y-6 overflow-hidden">
+      <div className="glass-strong rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5 overflow-hidden">
         {step === 0 && (
           <>
             <div>
@@ -312,13 +312,13 @@ export function SignupForm() {
       </div>
 
       {/* Nav */}
-      <div className="flex items-center justify-between gap-2 sm:gap-3">
+      <div className="flex items-center gap-2">
         <button
           type="button"
           onClick={() => goToStep(step - 1)}
           className={
-            "glass px-4 sm:px-5 py-2.5 sm:py-3 min-h-[44px] sm:min-h-[48px] rounded-xl text-sm font-medium text-foreground transition touch-manipulation " +
-            (step === 0 ? "invisible pointer-events-none" : "hover:border-primary/40")
+            "glass px-4 py-3 min-h-[52px] rounded-xl text-sm font-medium text-foreground transition touch-manipulation shrink-0 " +
+            (step === 0 ? "invisible pointer-events-none" : "hover:border-primary/40 active:brightness-90")
           }
         >
           ← Back
@@ -328,7 +328,7 @@ export function SignupForm() {
             type="button"
             disabled={!canContinue}
             onClick={() => goToStep(step + 1)}
-            className="bg-primary text-primary-foreground px-5 sm:px-6 py-2.5 sm:py-3 min-h-[44px] sm:min-h-[48px] rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition glow touch-manipulation"
+            className="flex-1 bg-primary text-primary-foreground py-3 min-h-[52px] rounded-xl text-base font-semibold hover:brightness-110 active:brightness-90 disabled:opacity-40 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
             Continue →
           </button>
@@ -373,7 +373,7 @@ export function SignupForm() {
                 setSubmitting(false);
               }
             }}
-            className="bg-primary text-primary-foreground px-5 sm:px-6 py-2.5 sm:py-3 min-h-[44px] sm:min-h-[48px] rounded-xl text-sm font-semibold hover:brightness-110 disabled:opacity-60 disabled:cursor-not-allowed transition glow touch-manipulation"
+            className="flex-1 bg-primary text-primary-foreground py-3 min-h-[52px] rounded-xl text-base font-semibold hover:brightness-110 active:brightness-90 disabled:opacity-60 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
             {submitting ? "Submitting…" : "Submit application"}
           </button>

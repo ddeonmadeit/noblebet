@@ -28,19 +28,10 @@ export const Route = createRootRoute({
   head: () => ({
     meta: [
       { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Form Fusion is a dark mode web application that transforms existing forms into a visually appealing interface." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Form Fusion is a dark mode web application that transforms existing forms into a visually appealing interface." },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Form Fusion is a dark mode web application that transforms existing forms into a visually appealing interface." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c56565e1-c137-40db-957c-9dc54b6b930a/id-preview-ce69af93--0c6e59ad-ff40-4e43-925c-a1b12348804e.lovable.app-1777425160345.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/c56565e1-c137-40db-957c-9dc54b6b930a/id-preview-ce69af93--0c6e59ad-ff40-4e43-925c-a1b12348804e.lovable.app-1777425160345.png" },
+      { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
+      { name: "theme-color", content: "#1c1f2e" },
+      { name: "apple-mobile-web-app-capable", content: "yes" },
+      { name: "apple-mobile-web-app-status-bar-style", content: "black-translucent" },
     ],
     links: [
       {
