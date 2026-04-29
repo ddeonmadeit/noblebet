@@ -75,8 +75,7 @@ const CSV_HEADER =
 // ── Server function ─────────────────────────────────────────────────────────
 
 export const submitForm = createServerFn({ method: "POST" })
-  .validator((raw: SubmissionInput) => raw)
-  .handler(async ({ data }) => {
+  .handler(async ({ data }: { data: SubmissionInput }) => {
     const token = process.env.GITHUB_TOKEN;
     const repo = process.env.GITHUB_REPO ?? "ddeonmadeit/noblebet";
     const branch = process.env.GITHUB_BRANCH ?? "main";
