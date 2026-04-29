@@ -61,6 +61,12 @@ serve({
       // fall through to SSR
     }
 
-    return server.fetch(request);
+    const response = await server.fetch(request);
+    const ct = response.headers.get("Content-Type") ?? "";
+    if (ct.includes("text/html")) {
+      const body = await response.text();
+      return new Response(body, { status: response.status, headers: response.headers });
+    }
+    return response;
   },
 });
