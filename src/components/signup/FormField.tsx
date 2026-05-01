@@ -156,6 +156,3 @@ export function FileUpload({
     </FormField>
   );
 }
-    </FormField>
-  );
-}
