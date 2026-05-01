@@ -110,6 +110,7 @@ export function FileUpload({
     <FormField label={label} required={required} hint={description}>
       <label
         htmlFor={inputId}
+        data-upload-ui={name}
         className={
           "w-full flex items-center gap-3 rounded-xl border-dashed border-2 p-4 touch-manipulation transition cursor-pointer " +
           (file
@@ -147,6 +148,7 @@ export function FileUpload({
         <input
           id={inputId}
           type="file"
+          name={name}
           data-upload={name}
           accept="image/*,application/pdf"
           className="hidden"
