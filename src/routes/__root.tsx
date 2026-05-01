@@ -45,6 +45,52 @@ export const Route = createRootRoute({
   notFoundComponent: NotFoundComponent,
 });
 
+const FALLBACK_JS = `(function(){
+  var step=0;
+  function val(id){var e=document.getElementById(id);return e?e.value.trim():'';}
+  function checked(name){return!!document.querySelector('input[name="'+name+'"]:checked');}
+  function stepOk(){
+    if(step===0){
+      var em=val('f-email'),ph=val('f-phone').replace(/\\D/g,'');
+      return/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(em)&&ph.length>=8&&ph.length<=15
+        &&val('f-firstName')&&val('f-lastName')&&val('f-referrer')
+        &&checked('hasSportsbettingAccount')&&checked('participatedSimilar')
+        &&!!document.querySelector('input[name="hasValidId"][value="Yes"]:checked');
+    }
+    if(step===1)return!!document.querySelector('input[name="agreedTerms"][value="Yes"]:checked');
+    if(step===2){
+      return['licenseFront','licenseBack','medicareOrPassport','selfie'].every(function(n){
+        var i=document.querySelector('input[data-upload="'+n+'"]');return i&&i.files&&i.files.length>0;
+      });
+    }
+    return true;
+  }
+  function goStep(n){
+    step=n;
+    document.querySelectorAll('[data-step]').forEach(function(el){
+      el.style.display=parseInt(el.getAttribute('data-step'))===n?'':'none';
+    });
+    var bb=document.getElementById('back-btn');
+    if(bb)bb.style.visibility=n===0?'hidden':'visible';
+    refresh();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function refresh(){
+    var cb=document.getElementById('continue-btn');
+    if(cb)cb.disabled=!stepOk();
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var cb=document.getElementById('continue-btn');
+    var bb=document.getElementById('back-btn');
+    if(!cb)return;
+    cb.addEventListener('click',function(){if(step<3&&!cb.disabled)goStep(step+1);});
+    if(bb)bb.addEventListener('click',function(){if(step>0)goStep(step-1);});
+    document.addEventListener('input',refresh);
+    document.addEventListener('change',refresh);
+    refresh();
+  });
+})();`;
+
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
@@ -54,6 +100,7 @@ function RootShell({ children }: { children: React.ReactNode }) {
       <body>
         {children}
         <Scripts />
+        <script dangerouslySetInnerHTML={{ __html: FALLBACK_JS }} />
       </body>
     </html>
   );

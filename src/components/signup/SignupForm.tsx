@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { FormField, TextInput, TextArea, RadioGroup, FileUpload } from "./FormField";
 import { TermsContent } from "./Terms";
 import { submitForm, type FilePayload } from "@/lib/submitForm";
@@ -8,7 +8,6 @@ async function fileToPayload(file: File): Promise<FilePayload> {
     const reader = new FileReader();
     reader.onload = () => {
       const dataUrl = reader.result as string;
-      // Strip the "data:...;base64," prefix — GitHub API wants raw base64
       const base64 = dataUrl.split(",")[1];
       resolve({ name: file.name, data: base64 });
     };
@@ -26,8 +25,6 @@ type FormState = {
   hasSportsbettingAccount: string;
   existingAccounts: string;
   participatedSimilar: string;
-  hasUpBank: string;
-  authoriseUpBank: string;
   hasValidId: string;
   agreedTerms: string;
   authoriseUpBankFinal: string;
@@ -50,6 +47,7 @@ export function SignupForm() {
     setStep(n);
     topRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
+
   const [data, setData] = useState<FormState>({
     email: "",
     referrer: "",
@@ -59,8 +57,6 @@ export function SignupForm() {
     hasSportsbettingAccount: "",
     existingAccounts: "",
     participatedSimilar: "",
-    hasUpBank: "",
-    authoriseUpBank: "",
     hasValidId: "",
     agreedTerms: "",
     authoriseUpBankFinal: "",
@@ -72,30 +68,6 @@ export function SignupForm() {
 
   const update = <K extends keyof FormState>(k: K, v: FormState[K]) =>
     setData((d) => ({ ...d, [k]: v }));
-
-  const emailValid = useMemo(() => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim()), [data.email]);
-  const phoneValid = useMemo(() => {
-    const digits = data.phone.replace(/\D/g, "");
-    return digits.length >= 8 && digits.length <= 15;
-  }, [data.phone]);
-
-  const canContinue = useMemo(() => {
-    if (step === 0) {
-      return (
-        emailValid &&
-        phoneValid &&
-        data.firstName &&
-        data.lastName &&
-        data.referrer.trim() &&
-        data.hasSportsbettingAccount &&
-        data.participatedSimilar &&
-        data.hasValidId === "Yes"
-      );
-    }
-    if (step === 1) return data.agreedTerms === "Yes";
-    if (step === 2) return data.licenseFront && data.licenseBack && data.medicareOrPassport && data.selfie;
-    return true;
-  }, [step, data, emailValid, phoneValid]);
 
   if (submitted) {
     return (
@@ -113,8 +85,28 @@ export function SignupForm() {
     );
   }
 
+  const emailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email.trim());
+  const phoneValid = (() => {
+    const d = data.phone.replace(/\D/g, "");
+    return d.length >= 8 && d.length <= 15;
+  })();
+
+  const stepValid = [
+    emailValid &&
+      phoneValid &&
+      !!data.firstName &&
+      !!data.lastName &&
+      !!data.referrer.trim() &&
+      !!data.hasSportsbettingAccount &&
+      !!data.participatedSimilar &&
+      data.hasValidId === "Yes",
+    data.agreedTerms === "Yes",
+    !!(data.licenseFront && data.licenseBack && data.medicareOrPassport && data.selfie),
+    true,
+  ];
+
   return (
-    <div ref={topRef} className="space-y-3 sm:space-y-5 scroll-mt-4">
+    <div ref={topRef} className="space-y-3 sm:space-y-5 scroll-mt-4" id="signup-form">
       {/* Stepper */}
       <div className="glass rounded-2xl p-3">
         <div className="flex items-center justify-center gap-1.5 sm:gap-3">
@@ -145,9 +137,7 @@ export function SignupForm() {
                     {label}
                   </span>
                 </div>
-                {i < STEPS.length - 1 && (
-                  <div className="w-6 sm:w-14 h-px bg-glass-border" />
-                )}
+                {i < STEPS.length - 1 && <div className="w-6 sm:w-14 h-px bg-glass-border" />}
               </div>
             );
           })}
@@ -157,162 +147,123 @@ export function SignupForm() {
         </div>
       </div>
 
-      {/* Step content */}
+      {/* All steps always in DOM — React controls visibility via inline style */}
       <div className="bg-card border border-glass-border rounded-2xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-5">
-        {step === 0 && (
-          <>
-            <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Your Details</h2>
-              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
-                This form takes about 3–5 minutes. We collect ID to comply with Australian legislation and to create accounts with fully regulated Australian bookmakers (TAB, Sportsbet, Pointsbet, etc).
-              </p>
-            </div>
 
-            <div className="rounded-xl bg-white/[0.05] border-l-4 border-l-primary border border-white/10 p-4 text-sm text-muted-foreground leading-relaxed">
-              <strong className="text-foreground">Why we ask:</strong> We will never use your ID for anything beyond signing you up to the aforementioned websites or creating a new bank account for depositing into and withdrawing from those accounts.
-            </div>
-
-            <FormField label="Email" required hint={data.email && !emailValid ? "Please enter a valid email address." : undefined}>
-              <TextInput type="email" placeholder="example@example.com" value={data.email} onChange={(e) => update("email", e.target.value)} />
+        {/* Step 0 — Details */}
+        <div data-step="0" style={step !== 0 ? { display: "none" } : undefined}>
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">Your Details</h2>
+            <p className="mt-1 text-xs sm:text-sm text-muted-foreground">
+              This form takes about 3–5 minutes. We collect ID to comply with Australian legislation and to create accounts with fully regulated Australian bookmakers (TAB, Sportsbet, Pointsbet, etc).
+            </p>
+          </div>
+          <div className="rounded-xl bg-white/[0.05] border-l-4 border-l-primary border border-white/10 p-4 text-sm text-muted-foreground leading-relaxed">
+            <strong className="text-foreground">Why we ask:</strong> We will never use your ID for anything beyond signing you up to the aforementioned websites or creating a new bank account for depositing into and withdrawing from those accounts.
+          </div>
+          <FormField label="Email" required hint={data.email && !emailValid ? "Please enter a valid email address." : undefined}>
+            <TextInput id="f-email" name="email" type="email" placeholder="example@example.com" value={data.email} onChange={(e) => update("email", e.target.value)} />
+          </FormField>
+          <FormField label="Hotel/Hostel/Villa" required>
+            <TextInput id="f-referrer" name="referrer" value={data.referrer} onChange={(e) => update("referrer", e.target.value)} />
+          </FormField>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <FormField label="First name" required>
+              <TextInput id="f-firstName" name="firstName" value={data.firstName} onChange={(e) => update("firstName", e.target.value)} />
             </FormField>
-
-            <FormField label="Hotel/Hostel/Villa" required>
-              <TextInput value={data.referrer} onChange={(e) => update("referrer", e.target.value)} />
+            <FormField label="Last name" required>
+              <TextInput id="f-lastName" name="lastName" value={data.lastName} onChange={(e) => update("lastName", e.target.value)} />
             </FormField>
-
-            <div className="grid gap-4 sm:grid-cols-2">
-              <FormField label="First name" required>
-                <TextInput value={data.firstName} onChange={(e) => update("firstName", e.target.value)} />
-              </FormField>
-              <FormField label="Last name" required>
-                <TextInput value={data.lastName} onChange={(e) => update("lastName", e.target.value)} />
-              </FormField>
-            </div>
-
-            <FormField label="Phone number" required hint={data.phone && !phoneValid ? "Please enter a valid phone number." : "Please enter a valid phone number."}>
-              <TextInput type="tel" placeholder="(000) 000-0000" value={data.phone} onChange={(e) => update("phone", e.target.value)} />
+          </div>
+          <FormField label="Phone number" required hint="Please enter a valid phone number.">
+            <TextInput id="f-phone" name="phone" type="tel" placeholder="(000) 000-0000" value={data.phone} onChange={(e) => update("phone", e.target.value)} />
+          </FormField>
+          <FormField label="Have you already created any sportsbetting accounts? (Sportsbet, TAB, Ladbrokes etc) Even if you have never used them" required>
+            <RadioGroup name="hasSportsbettingAccount" value={data.hasSportsbettingAccount} onChange={(v) => update("hasSportsbettingAccount", v)} options={["Yes", "No", "Not Sure"]} />
+          </FormField>
+          {data.hasSportsbettingAccount === "Yes" && (
+            <FormField label="Which accounts have you already created?">
+              <TextArea value={data.existingAccounts} onChange={(e) => update("existingAccounts", e.target.value)} placeholder="e.g. Sportsbet, TAB, Pointsbet..." />
             </FormField>
+          )}
+          <FormField label="Have you participated in a program similar to this?" required>
+            <RadioGroup name="participatedSimilar" value={data.participatedSimilar} onChange={(v) => update("participatedSimilar", v)} options={["Yes", "No"]} />
+          </FormField>
+          <FormField
+            label="Do you have a valid form of identification (driver's license or passport)?"
+            required
+            hint="We do NOT accept photo cards or proof-of-age cards. Only unexpired drivers licenses or passports."
+          >
+            <RadioGroup name="hasValidId" value={data.hasValidId} onChange={(v) => update("hasValidId", v)} options={["Yes"]} />
+          </FormField>
+        </div>
 
-            <FormField label="Have you already created any sportsbetting accounts? (Sportsbet, TAB, Ladbrokes etc) Even if you have never used them" required>
-              <RadioGroup name="hasSportsbettingAccount" value={data.hasSportsbettingAccount} onChange={(v) => update("hasSportsbettingAccount", v)} options={["Yes", "No", "Not Sure"]} />
-            </FormField>
+        {/* Step 1 — Terms */}
+        <div data-step="1" style={step !== 1 ? { display: "none" } : undefined}>
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">Terms &amp; Conditions</h2>
+            <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Please read the full agreement below before agreeing.</p>
+          </div>
+          <TermsContent />
+          <FormField label="I have read and agreed to the terms and conditions" required>
+            <RadioGroup name="agreedTerms" value={data.agreedTerms} onChange={(v) => update("agreedTerms", v)} options={["Yes", "No"]} />
+          </FormField>
+          <FormField label="I authorise for an UP / digital bank to be created (this is used to fund the accounts)">
+            <RadioGroup name="authoriseUpBankFinal" value={data.authoriseUpBankFinal} onChange={(v) => update("authoriseUpBankFinal", v)} options={["Yes", "No"]} />
+          </FormField>
+        </div>
 
-            {data.hasSportsbettingAccount === "Yes" && (
-              <FormField label="Which accounts have you already created?">
-                <TextArea value={data.existingAccounts} onChange={(e) => update("existingAccounts", e.target.value)} placeholder="e.g. Sportsbet, TAB, Pointsbet..." />
-              </FormField>
-            )}
+        {/* Step 2 — Documents */}
+        <div data-step="2" style={step !== 2 ? { display: "none" } : undefined}>
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">Document Uploads</h2>
+            <p className="mt-1 text-xs sm:text-sm text-muted-foreground">All 4 corners visible and all text clearly readable and unobstructed.</p>
+          </div>
+          <FileUpload label="Frontside of your DRIVER'S LICENSE" name="licenseFront" required description="We do NOT accept photo cards or ID cards — only unexpired licenses." file={data.licenseFront} onFile={(f) => update("licenseFront", f)} />
+          <FileUpload label="Backside of your DRIVER'S LICENSE" name="licenseBack" required file={data.licenseBack} onFile={(f) => update("licenseBack", f)} />
+          <FileUpload label="Frontside of your MEDICARE or PASSPORT" name="medicareOrPassport" required description="Used to verify any sports betting accounts." file={data.medicareOrPassport} onFile={(f) => update("medicareOrPassport", f)} />
+          <FileUpload label="Selfie holding your driver's licence or passport" name="selfie" required description="Ensures no 3rd party is posting your ID information without consent." file={data.selfie} onFile={(f) => update("selfie", f)} />
+        </div>
 
-            <FormField label="Have you participated in a program similar to this?" required>
-              <RadioGroup name="participatedSimilar" value={data.participatedSimilar} onChange={(v) => update("participatedSimilar", v)} options={["Yes", "No"]} />
-            </FormField>
-
-            <FormField
-              label="Do you have a valid form of identification (driver's license or passport)?"
-              required
-              hint="We do NOT accept photo cards or proof-of-age cards. Only unexpired drivers licenses or passports."
-            >
-              <RadioGroup name="hasValidId" value={data.hasValidId} onChange={(v) => update("hasValidId", v)} options={["Yes"]} />
-            </FormField>
-          </>
-        )}
-
-        {step === 1 && (
-          <>
-            <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Terms &amp; Conditions</h2>
-              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Please read the full agreement below before agreeing.</p>
-            </div>
-            <TermsContent />
-            <FormField label="I have read and agreed to the terms and conditions" required>
-              <RadioGroup name="agreedTerms" value={data.agreedTerms} onChange={(v) => update("agreedTerms", v)} options={["Yes", "No"]} />
-            </FormField>
-            <FormField label="I authorise for an UP / digital bank to be created (this is used to fund the accounts)">
-              <RadioGroup name="authoriseUpBankFinal" value={data.authoriseUpBankFinal} onChange={(v) => update("authoriseUpBankFinal", v)} options={["Yes", "No"]} />
-            </FormField>
-          </>
-        )}
-
-        {step === 2 && (
-          <>
-            <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Document Uploads</h2>
-              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">All 4 corners visible and all text clearly readable and unobstructed.</p>
-            </div>
-
-            <FileUpload
-              label="Frontside of your DRIVER'S LICENSE"
-              name="licenseFront"
-              required
-              description="We do NOT accept photo cards or ID cards — only unexpired licenses."
-              file={data.licenseFront}
-              onFile={(f) => update("licenseFront", f)}
-            />
-            <FileUpload
-              label="Backside of your DRIVER'S LICENSE"
-              name="licenseBack"
-              required
-              file={data.licenseBack}
-              onFile={(f) => update("licenseBack", f)}
-            />
-            <FileUpload
-              label="Frontside of your MEDICARE or PASSPORT"
-              name="medicareOrPassport"
-              required
-              description="Used to verify any sports betting accounts."
-              file={data.medicareOrPassport}
-              onFile={(f) => update("medicareOrPassport", f)}
-            />
-            <FileUpload
-              label="Selfie holding your driver's licence or passport"
-              name="selfie"
-              required
-              description="Ensures no 3rd party is posting your ID information without consent."
-              file={data.selfie}
-              onFile={(f) => update("selfie", f)}
-            />
-          </>
-        )}
-
-        {step === 3 && (
-          <>
-            <div>
-              <h2 className="text-lg sm:text-xl font-semibold text-foreground">Review &amp; Submit</h2>
-              <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Please confirm your details before submitting.</p>
-            </div>
-            <div className="grid gap-3 sm:grid-cols-2 text-sm">
-              {[
-                ["Name", `${data.firstName} ${data.lastName}`],
-                ["Email", data.email],
-                ["Phone", data.phone],
-                ["Referred by", data.referrer || "—"],
-                ["Existing sportsbetting accounts", data.hasSportsbettingAccount],
-                ["Similar program", data.participatedSimilar],
-                ["Valid ID", data.hasValidId],
-                ["Agreed to terms", data.agreedTerms],
-              ].map(([label, value]) => (
-                <div key={label} className="glass rounded-lg p-3">
-                  <div className="text-xs text-muted-foreground">{label}</div>
-                  <div className="text-foreground font-medium mt-1 break-words">{value || "—"}</div>
-                </div>
-              ))}
-              <div className="glass rounded-lg p-3 sm:col-span-2">
-                <div className="text-xs text-muted-foreground">Documents uploaded</div>
-                <ul className="text-foreground mt-1 space-y-1">
-                  <li>License front: {data.licenseFront?.name ?? "—"}</li>
-                  <li>License back: {data.licenseBack?.name ?? "—"}</li>
-                  <li>Medicare/Passport: {data.medicareOrPassport?.name ?? "—"}</li>
-                  <li>Selfie with ID: {data.selfie?.name ?? "—"}</li>
-                </ul>
+        {/* Step 3 — Review */}
+        <div data-step="3" style={step !== 3 ? { display: "none" } : undefined}>
+          <div>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground">Review &amp; Submit</h2>
+            <p className="mt-1 text-xs sm:text-sm text-muted-foreground">Please confirm your details before submitting.</p>
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 text-sm">
+            {[
+              ["Name", `${data.firstName} ${data.lastName}`],
+              ["Email", data.email],
+              ["Phone", data.phone],
+              ["Referred by", data.referrer || "—"],
+              ["Existing sportsbetting accounts", data.hasSportsbettingAccount],
+              ["Similar program", data.participatedSimilar],
+              ["Valid ID", data.hasValidId],
+              ["Agreed to terms", data.agreedTerms],
+            ].map(([label, value]) => (
+              <div key={label} className="glass rounded-lg p-3">
+                <div className="text-xs text-muted-foreground">{label}</div>
+                <div className="text-foreground font-medium mt-1 break-words">{value || "—"}</div>
               </div>
+            ))}
+            <div className="glass rounded-lg p-3 sm:col-span-2">
+              <div className="text-xs text-muted-foreground">Documents uploaded</div>
+              <ul className="text-foreground mt-1 space-y-1">
+                <li>License front: {data.licenseFront?.name ?? "—"}</li>
+                <li>License back: {data.licenseBack?.name ?? "—"}</li>
+                <li>Medicare/Passport: {data.medicareOrPassport?.name ?? "—"}</li>
+                <li>Selfie with ID: {data.selfie?.name ?? "—"}</li>
+              </ul>
             </div>
-          </>
-        )}
+          </div>
+        </div>
       </div>
 
       {/* Nav */}
       <div className="flex items-center gap-2">
         <button
+          id="back-btn"
           type="button"
           onClick={() => goToStep(step - 1)}
           className={
@@ -322,10 +273,12 @@ export function SignupForm() {
         >
           ← Back
         </button>
+
         {step < STEPS.length - 1 ? (
           <button
+            id="continue-btn"
             type="button"
-            disabled={!canContinue}
+            disabled={!stepValid[step]}
             onClick={() => goToStep(step + 1)}
             className="flex-1 bg-primary text-primary-foreground py-3 min-h-[52px] rounded-xl text-base font-semibold hover:brightness-110 active:brightness-90 disabled:opacity-40 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
@@ -333,6 +286,7 @@ export function SignupForm() {
           </button>
         ) : (
           <button
+            id="submit-btn"
             type="button"
             disabled={submitting}
             onClick={async () => {

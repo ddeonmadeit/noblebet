@@ -149,6 +149,7 @@ export function FileUpload({
       <input
         ref={inputRef}
         type="file"
+        data-upload={name}
         accept="image/*,application/pdf"
         className="hidden"
         onChange={(e) => onFile(e.target.files?.[0] ?? null)}
