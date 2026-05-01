@@ -25,9 +25,43 @@ const MIME = {
   ".txt": "text/plain",
 };
 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+const GITHUB_REPO = process.env.GITHUB_REPO ?? "ddeonmadeit/noblebet";
+
+async function ghFetch(path) {
+  return fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`, {
+    headers: { Authorization: `Bearer ${GITHUB_TOKEN}`, Accept: "application/vnd.github.raw+json" },
+  });
+}
+
 serve({
   fetch: async (request) => {
     const url = new URL(request.url);
+
+    // Photo proxy — streams a file from GitHub with download header
+    if (url.pathname === "/api/photo") {
+      const path = url.searchParams.get("path");
+      if (!path) return new Response("Missing path", { status: 400 });
+      const res = await ghFetch(path);
+      if (!res.ok) return new Response("Not found", { status: 404 });
+      const filename = path.split("/").pop() ?? "file";
+      const ct = res.headers.get("Content-Type") ?? "application/octet-stream";
+      return new Response(res.body, {
+        headers: { "Content-Type": ct, "Content-Disposition": `attachment; filename="${filename}"` },
+      });
+    }
+
+    // CSV proxy — downloads submissions.csv from GitHub
+    if (url.pathname === "/api/csv") {
+      const res = await ghFetch("submissions.csv");
+      if (res.status === 404) return new Response("timestamp,firstName,lastName,email\n", {
+        headers: { "Content-Type": "text/csv", "Content-Disposition": 'attachment; filename="submissions.csv"' },
+      });
+      if (!res.ok) return new Response("Failed", { status: 502 });
+      return new Response(res.body, {
+        headers: { "Content-Type": "text/csv", "Content-Disposition": 'attachment; filename="submissions.csv"' },
+      });
+    }
 
     // Serve hashed static assets (cache forever)
     if (url.pathname.startsWith("/assets/")) {
