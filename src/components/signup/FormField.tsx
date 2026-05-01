@@ -1,4 +1,4 @@
-import { ReactNode, useRef } from "react";
+import { ReactNode } from "react";
 
 export function FormField({
   label,
@@ -104,15 +104,14 @@ export function FileUpload({
   file: File | null;
   onFile: (f: File | null) => void;
 }) {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const inputId = `upload-${name}`;
 
   return (
     <FormField label={label} required={required} hint={description}>
-      <button
-        type="button"
-        onClick={() => inputRef.current?.click()}
+      <label
+        htmlFor={inputId}
         className={
-          "w-full flex items-center gap-3 rounded-xl border-dashed border-2 p-4 touch-manipulation transition text-left " +
+          "w-full flex items-center gap-3 rounded-xl border-dashed border-2 p-4 touch-manipulation transition cursor-pointer " +
           (file
             ? "bg-primary/10 border-primary/60 active:brightness-90"
             : "bg-white/[0.04] border-white/15 active:bg-white/10")
@@ -145,15 +144,18 @@ export function FileUpload({
         {file && (
           <span className="text-xs font-semibold text-primary shrink-0 underline">Replace</span>
         )}
-      </button>
-      <input
-        ref={inputRef}
-        type="file"
-        data-upload={name}
-        accept="image/*,application/pdf"
-        className="hidden"
-        onChange={(e) => onFile(e.target.files?.[0] ?? null)}
-      />
+        <input
+          id={inputId}
+          type="file"
+          data-upload={name}
+          accept="image/*,application/pdf"
+          className="hidden"
+          onChange={(e) => onFile(e.target.files?.[0] ?? null)}
+        />
+      </label>
+    </FormField>
+  );
+}
     </FormField>
   );
 }
