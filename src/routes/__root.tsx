@@ -62,6 +62,18 @@ const FALLBACK_JS = `(function(){
     if(step===2)return['licenseFront','licenseBack','medicareOrPassport','selfie'].every(filesOk);
     return true;
   }
+  function updateStepper(n){
+    var names=['Details','Terms','Documents'];
+    for(var i=0;i<TOTAL;i++){
+      var el=document.getElementById('step-circle-'+i);
+      if(!el)continue;
+      if(i<n){el.style.background='oklch(0.65 0.18 250/0.3)';el.style.color='oklch(0.65 0.18 250)';el.textContent='✓';}
+      else if(i===n){el.style.background='oklch(0.65 0.18 250)';el.style.color='oklch(0.97 0.01 250)';el.textContent=''+(i+1);}
+      else{el.style.background='';el.style.color='';el.textContent=''+(i+1);}
+    }
+    var txt=document.getElementById('stepper-text');
+    if(txt)txt.textContent='Step '+(n+1)+' of '+TOTAL+' · '+names[n];
+  }
   function goStep(n){
     step=n;
     document.querySelectorAll('[data-step]').forEach(function(el){
@@ -73,7 +85,8 @@ const FALLBACK_JS = `(function(){
     var last=n===TOTAL-1;
     if(bb)bb.style.visibility=n===0?'hidden':'visible';
     if(cb)cb.style.display=last?'none':'';
-    if(sb)sb.style.display=last?'':'none';
+    if(sb){sb.style.display=last?'':'none';if(last)sb.disabled=false;}
+    updateStepper(n);
     refresh();
     window.scrollTo({top:0,behavior:'smooth'});
   }

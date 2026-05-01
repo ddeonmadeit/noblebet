@@ -164,6 +164,7 @@ export function SignupForm() {
                 <div key={label} className="flex items-center gap-1.5 sm:gap-3">
                   <div className="flex flex-col items-center gap-1">
                     <div
+                      id={`step-circle-${i}`}
                       className={
                         "w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center text-xs font-bold transition " +
                         (active
@@ -189,7 +190,7 @@ export function SignupForm() {
               );
             })}
           </div>
-          <div className="mt-2 text-center text-[11px] text-muted-foreground sm:hidden">
+          <div id="stepper-text" className="mt-2 text-center text-[11px] text-muted-foreground sm:hidden">
             Step {step + 1} of {STEPS.length} · {STEPS[step]}
           </div>
         </div>
@@ -255,9 +256,6 @@ export function SignupForm() {
             <FormField label="I have read and agreed to the terms and conditions" required>
               <RadioGroup name="agreedTerms" value={data.agreedTerms} onChange={(v) => update("agreedTerms", v)} options={["Yes", "No"]} />
             </FormField>
-            <FormField label="I authorise for an UP / digital bank to be created (this is used to fund the accounts)">
-              <RadioGroup name="authoriseUpBankFinal" value={data.authoriseUpBankFinal} onChange={(v) => update("authoriseUpBankFinal", v)} options={["Yes", "No"]} />
-            </FormField>
           </div>
 
           {/* Step 2 — Documents */}
@@ -303,7 +301,7 @@ export function SignupForm() {
           <button
             id="submit-btn"
             type="submit"
-            disabled={submitting || (!isLastStep)}
+            disabled={submitting}
             style={!isLastStep ? { display: "none" } : undefined}
             className="flex-1 bg-primary text-primary-foreground py-3 min-h-[52px] rounded-xl text-base font-semibold hover:brightness-110 active:brightness-90 disabled:opacity-60 disabled:cursor-not-allowed transition glow touch-manipulation"
           >
