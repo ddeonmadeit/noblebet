@@ -27,7 +27,7 @@ const MIME = {
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 const GITHUB_REPO = process.env.GITHUB_REPO ?? "ddeonmadeit/noblebet";
-const GITHUB_BRANCH = process.env.GITHUB_BRANCH ?? "main";
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH ?? "claude/deploy-form-website-DZ3dO";
 
 async function ghFetch(path) {
   return fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${path}`, {
