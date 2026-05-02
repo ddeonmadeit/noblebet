@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" fill="none">
+  <!-- Crown -->
+  <g stroke="white" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <!-- Crown base band -->
+    <rect x="148" y="148" width="204" height="36" rx="4"/>
+    <!-- Crown points -->
+    <polyline points="148,148 148,100 182,130 215,80 250,110 285,80 318,130 352,100 352,148"/>
+    <!-- Crown jewels (small circles) -->
+    <circle cx="182" cy="155" r="8"/>
+    <circle cx="250" cy="155" r="8"/>
+    <circle cx="318" cy="155" r="8"/>
+  </g>
+
+  <!-- Shield body -->
+  <g stroke="white" stroke-width="10" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <path d="M148,184 L148,320 Q148,390 250,430 Q352,390 352,320 L352,184 Z"/>
+  </g>
+
+  <!-- Diagonal N / stripes inside shield -->
+  <g stroke="white" stroke-width="10" stroke-linecap="round" opacity="0.85">
+    <!-- Left vertical -->
+    <line x1="185" y1="210" x2="185" y2="390"/>
+    <!-- Right vertical -->
+    <line x1="315" y1="210" x2="315" y2="390"/>
+    <!-- Diagonal from top-left to bottom-right -->
+    <line x1="185" y1="210" x2="315" y2="370"/>
+    <!-- Second diagonal stripe (parallel offset) -->
+    <line x1="205" y1="210" x2="315" y2="340"/>
+    <line x1="185" y1="240" x2="295" y2="390"/>
+  </g>
+</svg>

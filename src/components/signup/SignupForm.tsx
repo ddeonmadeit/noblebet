@@ -72,14 +72,10 @@ export function SignupForm() {
   if (submitted) {
     return (
       <div className="bg-card border border-glass-border rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
-        <div className="w-16 h-16 mx-auto rounded-full bg-primary/20 flex items-center justify-center mb-4 glow">
-          <svg className="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-          </svg>
-        </div>
-        <h2 className="text-2xl font-semibold text-foreground">Submission received</h2>
+        <img src="/logo.svg" alt="Noble Bet" className="mx-auto mb-5 w-24 h-24 opacity-90" />
+        <h2 className="text-2xl font-semibold text-foreground">Thank you for submitting</h2>
         <p className="mt-2 text-muted-foreground">
-          Thank you. We'll review your details and be in touch shortly.
+          We will be in touch shortly.
         </p>
       </div>
     );
