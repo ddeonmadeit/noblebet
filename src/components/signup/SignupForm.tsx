@@ -72,7 +72,7 @@ export function SignupForm() {
   if (submitted) {
     return (
       <div className="bg-card border border-glass-border rounded-2xl p-6 sm:p-10 text-center max-w-xl mx-auto">
-        <img src="/logo.svg" alt="Noble Bet" className="mx-auto mb-5 w-24 h-24 opacity-90" />
+        <img src="/logo.jpg" alt="Noble Bet" className="mx-auto mb-5 w-24 h-24" />
         <h2 className="text-2xl font-semibold text-foreground">Thank you for submitting</h2>
         <p className="mt-2 text-muted-foreground">
           We will be in touch shortly.
