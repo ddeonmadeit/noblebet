@@ -38,8 +38,9 @@ function Index() {
 
         <SignupForm />
 
-        <footer className="mt-8 sm:mt-10 text-center text-[11px] text-muted-foreground/60 px-2">
-          Secure 2FA-protected vault · Governed by NSW law
+        <footer className="mt-8 sm:mt-10 text-center text-[11px] text-muted-foreground/60 px-2 space-y-1">
+          <p>Secure 2FA-protected vault · Governed by NSW law</p>
+          <p>For any questions contact WhatsApp: <a href="https://wa.me/61451887907" className="underline hover:text-muted-foreground">+61 451 887 907</a></p>
         </footer>
       </div>
     </main>
