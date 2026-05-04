@@ -138,6 +138,45 @@ serve({
       });
     }
 
+    // Server-side dashboard — works without React hydration
+    const DASH_PW = process.env.DASH_PASSWORD ?? "noble2025";
+    const DASH_STYLE = `*{box-sizing:border-box;margin:0;padding:0}body{background:#0e1120;color:#e8eaf6;font-family:system-ui,sans-serif;min-height:100vh;padding:24px}a{color:#818cf8}.card{background:#1a1e2e;border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:20px;margin-bottom:16px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:#64748b;margin-bottom:2px}.value{font-size:14px;color:#e8eaf6;word-break:break-word}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin:12px 0}.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:8px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);color:#e8eaf6;font-size:13px;text-decoration:none}.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:12px}h1{font-size:22px;font-weight:700}h2{font-size:16px;font-weight:600;margin-bottom:4px}.ts{font-size:12px;color:#64748b;margin-top:2px}input[type=password]{width:100%;padding:12px;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);border-radius:8px;color:#e8eaf6;font-size:16px;margin-bottom:12px}button[type=submit]{width:100%;padding:12px;background:#6366f1;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:600;cursor:pointer}.login-card{max-width:340px;margin:80px auto}`;
+
+    if (url.pathname === "/dash" && request.method === "GET") {
+      const cookie = request.headers.get("Cookie") ?? "";
+      const authed = cookie.includes(`dash_auth=${DASH_PW}`);
+      if (!authed) {
+        const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Dashboard — Noble Bet</title><style>${DASH_STYLE}</style></head><body><div class="login-card"><h1 style="text-align:center;margin-bottom:24px">Noble Bet</h1><form method="post" action="/dash"><input type="password" name="pw" placeholder="Password" autofocus/><button type="submit">Enter</button></form></div></body></html>`;
+        return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+      }
+      // Fetch and render submissions
+      try {
+        const res = await ghFetch("submissions.csv");
+        const csv = res.ok ? await res.text() : CSV_HEADER;
+        const rows = csv.trim().split("\n").slice(1).filter(Boolean).reverse();
+        const parse = (line) => { const cols = []; let cur = "", inQ = false; for (const ch of line) { if (ch === '"') inQ = !inQ; else if (ch === ',' && !inQ) { cols.push(cur); cur = ""; } else cur += ch; } cols.push(cur); return cols; };
+        const cards = rows.map(r => {
+          const [ts,fn,ln,email,phone,ref,hasAccts,existing,similar,validId,terms,upbank,lf,lb,mp,sf] = parse(r);
+          const photos = [[lf,"License Front"],[lb,"License Back"],[mp,"Medicare/Passport"],[sf,"Selfie"]].filter(([p])=>p);
+          return `<div class="card"><div style="display:flex;justify-content:space-between;align-items:start;flex-wrap:wrap;gap:8px;margin-bottom:12px"><div><h2>${fn||""} ${ln||""}</h2><div class="ts">${ts||""}</div></div></div><div class="grid">${[["Email",email],["Phone",phone],["Referred by",ref],["Betting accounts",hasAccts],["Existing accounts",existing],["Similar program",similar],["Valid ID",validId],["Agreed terms",terms]].filter(([,v])=>v).map(([l,v])=>`<div class="card" style="margin:0"><div class="label">${l}</div><div class="value">${v}</div></div>`).join("")}</div>${photos.length?`<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:8px">${photos.map(([p,l])=>`<a class="btn" href="/api/photo?path=${encodeURIComponent(p)}" download>↓ ${l}</a>`).join("")}</div>`:""}</div>`;
+        }).join("") || `<p style="color:#64748b;text-align:center;padding:60px 0;font-size:18px">No submissions yet.</p>`;
+        const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Dashboard — Noble Bet</title><style>${DASH_STYLE}</style></head><body><div class="header"><h1>Submissions (${rows.length})</h1><a class="btn" href="/api/csv" download>↓ Download CSV</a></div>${cards}</body></html>`;
+        return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+      } catch (e) {
+        return new Response("Error loading submissions: " + e.message, { status: 500 });
+      }
+    }
+
+    if (url.pathname === "/dash" && request.method === "POST") {
+      const fd = await request.formData();
+      const pw = (fd.get("pw") ?? "").toString();
+      if (pw !== DASH_PW) {
+        const html = `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Dashboard — Noble Bet</title><style>${DASH_STYLE}</style></head><body><div class="login-card"><h1 style="text-align:center;margin-bottom:24px">Noble Bet</h1><form method="post" action="/dash"><input type="password" name="pw" placeholder="Password" autofocus/><p style="color:#f87171;margin-bottom:12px;font-size:14px">Incorrect password</p><button type="submit">Enter</button></form></div></body></html>`;
+        return new Response(html, { headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } });
+      }
+      return new Response(null, { status: 303, headers: { Location: "/dash", "Set-Cookie": `dash_auth=${DASH_PW}; Path=/; HttpOnly; SameSite=Strict`, "Cache-Control": "no-store" } });
+    }
+
     // CSV proxy — downloads submissions.csv from GitHub
     if (url.pathname === "/api/csv") {
       const res = await ghFetch("submissions.csv");
