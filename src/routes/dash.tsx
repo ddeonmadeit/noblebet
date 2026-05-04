@@ -15,7 +15,7 @@ function Dashboard() {
   const [error, setError] = useState("");
 
   const login = async () => {
-    if (pw !== "0") { setError("Incorrect password"); return; }
+    if (pw !== " ") { setError("Incorrect password"); return; }
     setLoading(true);
     setError("");
     try {
