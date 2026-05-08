@@ -83,6 +83,8 @@ serve({
       try {
         const fd = await request.formData();
         const get = (k) => (fd.get(k) ?? "").toString().trim();
+        // Honeypot: bots fill hidden fields, humans don't
+        if (get("_hp") !== "") return Response.redirect(new URL("/thank-you", request.url).toString(), 303);
         const timestamp = new Date().toISOString();
         const firstName = get("firstName"), lastName = get("lastName");
         const slug = `${timestamp.replace(/[:.]/g, "-")}-${firstName}-${lastName}`

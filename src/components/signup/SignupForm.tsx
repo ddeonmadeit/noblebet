@@ -149,6 +149,8 @@ export function SignupForm() {
       onSubmit={(e) => { e.preventDefault(); handleReactSubmit(); }}
       id="signup-form"
     >
+      {/* Honeypot — hidden from humans, bots fill it in */}
+      <input type="text" name="_hp" defaultValue="" tabIndex={-1} autoComplete="off" aria-hidden="true" style={{ display: "none" }} />
       <div ref={topRef} className="space-y-3 sm:space-y-5 scroll-mt-4">
         {/* Stepper */}
         <div className="glass rounded-2xl p-3">
